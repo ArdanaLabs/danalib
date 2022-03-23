@@ -2,14 +2,9 @@
   # Nixpkgs / NixOS version to use.
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-21.11";
-    flake-compat-ci.url = "github:hercules-ci/flake-compat-ci";
-    flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
   };
 
-  outputs = { self, nixpkgs, flake-compat, flake-compat-ci }:
+  outputs = { self, nixpkgs }:
     let
 
       # Generate a user-friendly version number.
@@ -25,14 +20,7 @@
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
 
     in
-
   {
-
-    ciNix = flake-compat-ci.lib.recurseIntoFlakeWith {
-      flake = self;
-      systems = [ "x86_64-linux" ];
-    };
-
     overlay = final: prev: {};
 
     apps = forAllSystems (system:
@@ -59,8 +47,10 @@
         pkgs = nixpkgsFor."${system}";
       in
       {
-        mkDoc = import ./internal/mkdoc.nix { inherit pkgs; };
+        mkDoc = import ./internal/mkdoc.nix {  inherit pkgs; };
       });
+
+      herculesCI.ciSystems = [ "x86_64-linux" ];
   };
 
 }
