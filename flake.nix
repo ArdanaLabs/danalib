@@ -23,25 +23,6 @@
   {
     overlay = final: prev: {};
 
-    apps = forAllSystems (system:
-      let
-        pkgs = nixpkgsFor."${system}";
-      in
-      {
-        lint-haskell = {
-          type = "app";
-          program = "${self.linters.${system}.haskell.lintScript}/bin/lint";
-        };
-      });
-
-    linters = forAllSystems (system:
-      let
-        pkgs = nixpkgsFor."${system}";
-      in
-      {
-        haskell = import ./linters/haskell.nix { inherit pkgs; };
-      });
-
     internal = forAllSystems (system:
       let
         pkgs = nixpkgsFor."${system}";
