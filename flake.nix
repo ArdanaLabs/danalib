@@ -2,6 +2,7 @@
   # Nixpkgs / NixOS version to use.
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-21.11";
+    hci-effects.url = "github:hercules-ci/hercules-ci-effects";
   };
 
   outputs = { self, nixpkgs }:
@@ -48,6 +49,10 @@
       in
       {
         mkDoc = import ./internal/mkdoc.nix {  inherit pkgs; };
+        mkGitBranchViaEffect = import ./internal/mk-git-branch-via-effect.nix {
+          inherit pkgs;
+          hci-effects = hercules-ci-effects.lib.withPkgs pkgs;
+        };
       });
 
       herculesCI.ciSystems = [ "x86_64-linux" ];
